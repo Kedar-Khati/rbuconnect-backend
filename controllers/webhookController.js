@@ -28,26 +28,28 @@ export const handleClerkWebhook = async (req, res) => {
 
     console.log("Received Clerk event:", evt.type);
 
-    if (evt.type === "user.created") {
-      const userData = {
-        clerkId: evt.data.id,
-        email: evt.data.email_addresses[0].email_address,
-        username: evt.data.username || "",
-        firstName: evt.data.first_name || "",
-        lastName: evt.data.last_name || "",
-        photo: evt.data.image_url || "",
-      };
-
-      const existingUser = await User.findOne({ clerkId: userData.clerkId });
-
-      if (!existingUser) {
-        const newUser = new User(userData);
-        await newUser.save();
-        console.log("New user saved to DB:", newUser);
-      } else {
-        console.log("User already exists in DB.");
+    if (evt.type === "user.created" || evt.type === "user.logged_in") {
+        const userData = {
+          clerkId: evt.data.id,
+          email: evt.data.email_addresses[0].email_address,
+          username: evt.data.username || "",
+          firstName: evt.data.first_name || "",
+          lastName: evt.data.last_name || "",
+          photo: evt.data.image_url || "",
+        };
+      
+        const existingUser = await User.findOne({ clerkId: userData.clerkId });
+      
+        if (!existingUser) {
+          const newUser = new User(userData);
+          await newUser.save();
+          console.log("New user saved to DB:", newUser);
+        } else {
+          console.log("User already exists. Updating login timestamp.");
+          existingUser.lastLogin = new Date();
+          await existingUser.save();
+        }
       }
-    }
 
     res.status(200).json({ message: "Webhook received" });
   } catch (err) {
