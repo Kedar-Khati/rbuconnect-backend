@@ -32,7 +32,7 @@ export const handleClerkWebhook = async (req, res) => {
         const userData = {
           clerkId: evt.data.id,
           email: evt.data.email_addresses[0].email_address,
-          username: evt.data.username || "",
+          username: evt.data.first_name+" "+evt.data.last_name || "",
           firstName: evt.data.first_name || "",
           lastName: evt.data.last_name || "",
           photo: evt.data.image_url || "",

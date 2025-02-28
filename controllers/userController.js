@@ -1,26 +1,21 @@
-import User from "../models/User.js";
+import User from "../models/User.js"; // Import the User model
 
-/**
- * Create or update user based on Clerk authentication
- */
-export const createUser = async (req, res) => {
+// Get user by clerkId
+export const getUser = async (req, res) => {
   try {
-    const { clerkId, email, firstName, lastName, imageUrl } = req.auth.user;
-    const name = `${firstName} ${lastName}`;
+    const { clerkId } = req.params; // Extract clerkId from the request parameters
 
-    let user = await User.findOne({ clerkId });
+    // Find the user by clerkId
+    const user = await User.findOne({ clerkId }).select("-__v"); // Exclude the __v field
+
     if (!user) {
-      user = new User({ clerkId, email, name, profilePicture: imageUrl });
-      await user.save();
+      return res.status(404).json({ message: "User not found" });
     }
-    else{
-      res.status(400).json({message:"User already exists"});
-    }
-    res.status.json()
+
+    // Return the user data
+    res.status(200).json(user);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Error fetching user:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
-
-
-
