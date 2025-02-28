@@ -17,8 +17,8 @@ const userSchema = new mongoose.Schema(
     gender: { type: String, enum: ["Male", "Female", "Other"] },
 
     // Educational Details
-    college: { type: String, required: true },  // Name of the college
-    graduationYear: { type: Number, required: true },  // Year of graduation
+    // college: { type: String, required: true },  // Name of the college
+    // graduationYear: { type: Number, required: true },  // Year of graduation
     degree: { type: String },  // Degree obtained (e.g., B.Tech, MBA)
     major: { type: String },  // Major or specialization (e.g., Computer Science, Marketing)
     currentStatus: { type: String, enum: ["Student", "Alumni", "Faculty"] },  // Current status in the college
